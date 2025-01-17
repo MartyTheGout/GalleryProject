@@ -1,11 +1,7 @@
+# Initial Project Structure
+## GalleryProject Repository
+## ㄴ .gitignore
+## ㄴ GalleryProject
 
-
-### APIKeys ###
-/GalleryProject/Credentials/APIKeys.swift
-
-
-**/Credentials/*
-
-.Credentials/
-
+### Ignore APIKeys ###
 GalleryProject/Credentials/APIKeys.swift
