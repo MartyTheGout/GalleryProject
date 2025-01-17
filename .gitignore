@@ -7,3 +7,5 @@
 **/Credentials/*
 
 .Credentials/
+
+GalleryProject/Credentials/APIKeys.swift
