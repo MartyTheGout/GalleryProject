@@ -5,3 +5,11 @@
 
 ### Ignore APIKeys ###
 GalleryProject/Credentials/APIKeys.swift
+
+
+GalleryProject.xcodeproj/xcuserdata/*
+
+
+xcuserdata/
+
+xcshareddata/
