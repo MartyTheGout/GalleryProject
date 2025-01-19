@@ -23,8 +23,10 @@ class SearchViewHeader: BaseUI {
     
     let sortButton = {
        let sortButton = UIButton()
-        let blackString = NSAttributedString(string: " 관련순", attributes: [.foregroundColor : UIColor.black])
-        sortButton.setAttributedTitle(blackString, for: .normal)
+//        let blackString = NSAttributedString(string: " 관련순", attributes: [.foregroundColor : UIColor.black])
+//        sortButton.setAttributedTitle(blackString, for: .normal)
+        sortButton.setTitleColor(.black, for: .normal)
+        sortButton.setTitle("관련순", for: .normal)
         
         sortButton.setImage(UIImage(systemName: "equal.square"), for: .normal)
         sortButton.tintColor = .black

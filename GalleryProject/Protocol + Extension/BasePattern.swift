@@ -50,6 +50,7 @@ class BaseViewController : UIViewController, UIEssentialCycle {
         configureViewLayout()
         configureViewDesign()
         configureNavigatorSection()
+        addingDismissTap()
     }
     
     func configureViewHierarchy() {}
@@ -71,6 +72,18 @@ class BaseViewController : UIViewController, UIEssentialCycle {
         alertController.addAction(action)
         present(alertController, animated: true)
     }
+    
+    func addingDismissTap() {
+        let outsidTap = UITapGestureRecognizer(target: self, action: #selector(dismissEditing))
+        outsidTap.cancelsTouchesInView = false
+        view.addGestureRecognizer(outsidTap)
+    }
+    
+    @objc
+    func dismissEditing() {
+        view.endEditing(true)
+    }
+    
 }
 
 //MARK: BaseCollecionViewCell - Extension
@@ -119,6 +132,8 @@ class BaseScrollViewController : UIViewController, UIEssentialCycle, UIScrollVie
         configureViewLayout()
         attachingContentViewToBottomElement()
         configureViewDesign()
+        
+        
     }
     
     // Default is vertical setting 

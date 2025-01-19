@@ -22,7 +22,8 @@ class ViewController: UITabBarController {
         let mainVC = MainViewController()
         let mainVCSymbol = UIImage(systemName: "chart.line.uptrend.xyaxis")?.withTintColor(colorUnSelected)
         let mainVCSymbolSelected = UIImage(systemName: "chart.line.uptrend.xyaxis")?.withTintColor(colorSelected)
-        mainVC.tabBarItem = UITabBarItem(title: "", image: mainVCSymbol, selectedImage: mainVCSymbolSelected)
+        let mainNC = UINavigationController(rootViewController: mainVC)
+        mainNC.tabBarItem = UITabBarItem(title: "", image: mainVCSymbol, selectedImage: mainVCSymbolSelected)
         
         let playableVC = PlayableViewController()
         let playableVCSymbol =  UIImage(systemName: "play.display")?.withTintColor(colorUnSelected)
@@ -40,7 +41,7 @@ class ViewController: UITabBarController {
         let likeVCSymbolSelected = UIImage(systemName: "heart")?.withTintColor(colorSelected)
         likeVC.tabBarItem = UITabBarItem(title: "", image: likeVCSymbol, selectedImage: likeVCSymbolSelected)
         
-        let viewControllers = [mainVC, playableVC, searchNC, likeVC]
+        let viewControllers = [mainNC, playableVC, searchNC, likeVC]
         setViewControllers(viewControllers, animated: true)
     }
     

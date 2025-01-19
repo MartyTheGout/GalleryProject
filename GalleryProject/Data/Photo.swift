@@ -7,8 +7,17 @@
 
 import Foundation
 
+
+struct PhotoStaticsReponse: Codable {
+    let id, slug: String
+    let downloads, views, likes: TotalAndDetail
+}
+
+struct TotalAndDetail: Codable {
+    let total: Int
+}
+
 struct SearchPhotoResponse : Codable {
-    
     let total: Int
     let totalPages: Int
     let results: [PhotoData]
@@ -29,6 +38,7 @@ struct PhotoData: Codable {
     let likes: Int
     let likedByUser: Bool
     let assetType: String
+    let user: User
 
     enum CodingKeys: String, CodingKey {
         case id, slug
@@ -39,7 +49,23 @@ struct PhotoData: Codable {
         case urls, likes
         case likedByUser = "liked_by_user"
         case assetType = "asset_type"
+        case user
     }
+}
+
+struct User : Codable {
+    let id: String
+    let username: String
+    let profileImage: ProfileImage
+    
+    enum CodingKeys: String, CodingKey {
+        case id, username
+        case profileImage = "profile_image"
+    }
+}
+
+struct ProfileImage: Codable {
+    let small, medium, large: String
 }
 
 struct UnsplashURLs: Codable {

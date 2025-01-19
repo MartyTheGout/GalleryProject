@@ -10,6 +10,7 @@ import Alamofire
 
 class NetworkManager {
     static let shared : NetworkManager = NetworkManager()
+    let dataPerRequest = 20
     
     private init() {}
     
@@ -36,8 +37,6 @@ class NetworkManager {
                       completionHander: @escaping (T) -> Void ) -> Void {
         var url = RequiredDataForNetwork.baseURL.rawValue
         
-        let dataPerRequest = 20
-        
         switch apiClassification {
         case .topic:
             url += "/topics/\(query)/photos?page=1"
@@ -51,7 +50,7 @@ class NetworkManager {
                 url += "&order_by=relevant"
             }
         case .staticalData:
-            url += ""
+            url += "/photos/\(query)/statistics"
         }
         
         let authorizationHeader: HTTPHeaders = ["Authorization": "\(APIKeys.UnsplashAcessKey.rawValue)"]

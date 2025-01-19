@@ -20,4 +20,11 @@ enum APIClassification : Int {
 enum SearchCriteria : Int {
     case relevant
     case latest
+    
+    func getbuttonText() -> String {
+        switch self {
+        case .relevant: return "관련순"
+        case .latest: return "최신순"
+        }
+    }
 }

@@ -122,6 +122,12 @@ extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSou
         return UICollectionViewCell()
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let photoAtIndexPath = dataSource[returnKeywordIndex(collectionView)][indexPath.item]
+        let detailVC = DetailViewController(photo: photoAtIndexPath )
+        navigationController?.pushViewController(detailVC, animated: true)
+    }
+    
     func returnKeywordIndex (_ collectionView : UICollectionView) -> Int {
         if collectionView == firstTopicCollection.collectionView{
             return 0

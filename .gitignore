@@ -8,8 +8,11 @@ GalleryProject/Credentials/APIKeys.swift
 
 
 GalleryProject.xcodeproj/xcuserdata/*
-
+GalleryProject.xcodeproj/xcuserdata/**.*
 
 xcuserdata/
 
 xcshareddata/
+
+xcschememanagement
+
