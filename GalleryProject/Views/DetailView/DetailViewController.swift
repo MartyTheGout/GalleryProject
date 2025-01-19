@@ -23,15 +23,14 @@ class DetailViewController : BaseScrollViewController {
             ]
             
             if let keyValueViews = detailInfoBody.infoHorizontalStackView.arrangedSubviews[1] as? MultipleKeyValueStackVie {
-                for (i, kvView) in keyValueViews.subviews.enumerated() {
-                    if let view = kvView as? TwoEndedKeyValueView {
-                        print(requiredData[view.keyLabel.text!])
+                
+                keyValueViews.subviews.forEach {
+                    if let view = $0 as? TwoEndedKeyValueView {
                         view.valueLabel.text = requiredData[view.keyLabel.text!]
                     } else {
                         print("this is not an TwoEndedView")
                     }
                 }
-                
             } else {
                 print("not multikeyvalueview")
             }
