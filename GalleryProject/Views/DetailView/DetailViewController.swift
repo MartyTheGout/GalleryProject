@@ -67,9 +67,10 @@ class DetailViewController : BaseScrollViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                NetworkManager.shared.getPhotoWith(query: photo.id, apiClassification: .staticalData) { (response : PhotoStaticsReponse)-> Void in
-                    self.photoStaticsData = response
-                }
+        
+        NetworkManager.shared.callRequest(api: .statistics(query: photo.id)) { (response : PhotoStaticsReponse)-> Void in
+                self.photoStaticsData = response
+        }
     }
     
     override func configureViewHierarchy() {

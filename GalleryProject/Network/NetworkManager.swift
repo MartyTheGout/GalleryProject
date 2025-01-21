@@ -8,62 +8,48 @@
 import Foundation
 import Alamofire
 
+enum UnsplashRequest {
+    case topic(query: String)
+    case search(query: String, paging: Int, searchCriteria: SearchCriteria)
+    case statistics(query: String)
+    
+    var baseURL: String { "https://api.unsplash.com/"}
+    var dataPerRequest: Int { 20 }
+    
+    var authorizationHeader: HTTPHeaders {
+        return ["Authorization": "\(APIKeys.UnsplashAcessKey.rawValue)"]
+    }
+    
+    var method: HTTPMethod { .get }
+    
+    var endpoint: URL {
+        switch self {
+        case .topic(let query): return URL(string: baseURL + "topics/\(query)/photos?page=1" )!
+        case .search(let query, let paging, let searchCriteria): return URL(string: baseURL + "search/photos?query=\(query)&page=\(paging)&per_page=\(dataPerRequest)&order_by=\(searchCriteria.rawValue)")!
+        case .statistics(let query): return URL(string: baseURL + "photos/\(query)/statistics")!
+        }
+    }
+}
+
+
 class NetworkManager {
     static let shared : NetworkManager = NetworkManager()
     let dataPerRequest = 20
     
     private init() {}
     
-    func getPhotoWith(query: String, paging: Int = 1) async -> [PhotoData] {
-        var url = RequiredDataForNetwork.baseURL.rawValue
-        url += "/topics/\(query)/photos?page=1"
-        
-        let authorizationHeader: HTTPHeaders = ["Authorization": "\(APIKeys.UnsplashAcessKey)"]
-    
-        let response = AF.request(url, method: .get, encoding:JSONEncoding.default, headers: authorizationHeader).responseString { _ in }.serializingDecodable([PhotoData].self)
-        
-        do {
-            return try await response.value
-        } catch {
-            print(error)
-            return []
-        }
-    }
-    
-    func getPhotoWith<T: Decodable>(query: String,
-                      paging: Int = 1,
-                      apiClassification: APIClassification = APIClassification.topic,
-                      searchCriteria : SearchCriteria = SearchCriteria.relevant,
-                      completionHander: @escaping (T) -> Void ) -> Void {
-        var url = RequiredDataForNetwork.baseURL.rawValue
-        
-        switch apiClassification {
-        case .topic:
-            url += "/topics/\(query)/photos?page=1"
-        case . search:
-            url += "/search/photos?query=\(query)&page=\(paging)&per_page=\(dataPerRequest)"
-            
-            switch searchCriteria {
-            case .latest:
-                url += "&order_by=latest"
-            case .relevant:
-                url += "&order_by=relevant"
-            }
-        case .staticalData:
-            url += "/photos/\(query)/statistics"
-        }
-        
-        let authorizationHeader: HTTPHeaders = ["Authorization": "\(APIKeys.UnsplashAcessKey.rawValue)"]
-        
-        AF.request(url, method: .get,headers: authorizationHeader).responseDecodable(of: T.self) { response in
+    func callRequest<T: Decodable>(api: UnsplashRequest,
+                                   completionHandler: @escaping (T) -> Void,
+                                   failureHandler: (() -> Void)? = nil
+    ) {
+        AF.request(api.endpoint, method: api.method, headers: api.authorizationHeader).responseDecodable(of: T.self) { response in
             switch response.result {
             case .success(let value):
-                completionHander(value)
-            case .failure(let value):
-                print(value)
+                completionHandler(value)
+            case .failure(let error):
+                failureHandler?()
+                print("Error: \(error)")
             }
         }
     }
-    
-    
 }

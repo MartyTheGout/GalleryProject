@@ -75,7 +75,3 @@ struct UnsplashURLs: Codable {
         case raw, full, regular, small, thumb
     }
 }
-
-struct PhotoStaticResponse {
-    
-}

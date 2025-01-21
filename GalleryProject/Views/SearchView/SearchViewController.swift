@@ -100,14 +100,14 @@ class SearchViewController : BaseViewController {
     }
     
     func getPhotos(_ searchKeyword : String, searchCriteria : SearchCriteria, paging: Int = 1 ) {
-        NetworkManager.shared.getPhotoWith(query: searchKeyword, paging: paging, apiClassification: .search, searchCriteria: searchCriteria ) { (photoResponse: SearchPhotoResponse) -> Void in
+        
+        NetworkManager.shared.callRequest(api: .search(query: searchKeyword, paging: paging, searchCriteria: searchCriteria) ) { (photoResponse: SearchPhotoResponse) -> Void in
             
             if self.currentSearchCriteria == searchCriteria && self.currentKeyword == searchKeyword{
                 self.dataSource.append(contentsOf: photoResponse.results)
             } else {
                 self.dataSource = photoResponse.results
-                
-                // 데이터가 [] 배열이면 indexPath도 없을 것이므로 스크롤하지 않는다. : 관리해줘야하는 상태값들이 많이 생겼고, 상태값관리에 대한 함수간의 관계복잡도가 증가했다. 
+            
                 if !self.dataSource.isEmpty {
                     self.body.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
                 }
@@ -118,7 +118,6 @@ class SearchViewController : BaseViewController {
                     self.currentSearchCriteria = searchCriteria
                 }
             }
-            
             self.currentKeyword = searchKeyword
         }
     }

@@ -17,24 +17,7 @@ class MainViewController : BaseScrollViewController {
     
     let numberOfItem = 10
     
-    var dataSource: [[PhotoData]] = [[],[],[]] {
-        didSet {
-            if oldValue[0].count == 0 {
-                firstTopicCollection.collectionView.reloadData()
-                return
-            }
-            
-            if oldValue[1].count == 0 {
-                secondTopicCollection.collectionView.reloadData()
-                return
-            }
-            
-            if oldValue[2].count == 0 {
-                thirdTopicCollection.collectionView.reloadData()
-                return
-            }
-        }
-    }
+    var dataSource: [[PhotoData]] = [[],[],[]]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,19 +67,31 @@ class MainViewController : BaseScrollViewController {
         }
     }
     
-    func setHandler(index: Int) -> (_ : [PhotoData]) -> Void {
+    func setHandler(index: Int, group: DispatchGroup) -> (_ : [PhotoData]) -> Void {
         return { photoResponse in
             self.dataSource[index] = photoResponse
+            group.leave()
         }
     }
     
     func loadDataSource() -> Void {
+        let dispatchGroup = DispatchGroup()
+        
         for i in 0...dataSource.count - 1 {
             let group = dataSource[i]
             if group.count == 0 {
                 let searchKeyword = RequiredDataForViews.mainViewKeywords.getQueryString()[i] // 쉽게 괸리할 수 없을까? 복잡하다.
-                NetworkManager.shared.getPhotoWith(query: searchKeyword, completionHander: setHandler(index: i))
+                dispatchGroup.enter()
+                NetworkManager.shared.callRequest(
+                    api: .topic(query: searchKeyword),
+                    completionHandler: setHandler(index: i, group: dispatchGroup),
+                    failureHandler: { dispatchGroup.leave()}
+                )
             }
+        }
+        
+        dispatchGroup.notify(queue: .main) {
+            [self.firstTopicCollection.collectionView, self.secondTopicCollection.collectionView, self.thirdTopicCollection.collectionView].forEach { $0.reloadData()}
         }
     }
 }
