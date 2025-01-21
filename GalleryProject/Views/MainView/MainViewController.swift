@@ -109,7 +109,7 @@ extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSou
             
             if dataSource[index].count != 0 {
                 let photoData = dataSource[index][indexPath.item]
-                cell.fillUpData(imageURL: photoData.urls.regular, starNumber: photoData.likes)
+                cell.fillUpData(imageURL: photoData.urls.thumb, starNumber: photoData.likes)
             }
             
             return cell

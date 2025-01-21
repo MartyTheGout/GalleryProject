@@ -30,7 +30,7 @@ class DetailViewController : BaseScrollViewController {
             userName: self.photo.user.username,
             userProfileImageURL : self.photo.user.profileImage.small,
             dateInfo: self.photo.createdAt,
-            imageURL: self.photo.urls.regular
+            imageURL: self.photo.urls.thumb
         )
         return detailViewImageHeader
     }()

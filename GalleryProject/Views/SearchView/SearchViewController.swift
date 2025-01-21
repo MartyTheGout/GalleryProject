@@ -144,7 +144,7 @@ extension SearchViewController : UICollectionViewDelegate, UICollectionViewDataS
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageViewCell.identifier , for: indexPath) as? ImageViewCell {
             let photoData = dataSource[indexPath.item]
             cell.usedFrom = .search
-            cell.fillUpData(imageURL: photoData.urls.regular, starNumber: photoData.likes)
+            cell.fillUpData(imageURL: photoData.urls.thumb, starNumber: photoData.likes)
             return cell
         }
         return UICollectionViewCell()
