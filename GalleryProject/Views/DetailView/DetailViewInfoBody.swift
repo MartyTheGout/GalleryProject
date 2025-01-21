@@ -27,6 +27,12 @@ class DetailViewInfoBody: BaseUI {
         fatalError("init(coder:) has not been implemented")
     }
     
+    let sizeInfoRow: BaseUI = TwoEndedKeyValueView(key: "", value: "")
+    
+    let viewInfoRow: BaseUI = TwoEndedKeyValueView(key: "", value: "")
+    
+    let downloadInfoRow: BaseUI = TwoEndedKeyValueView(key: "", value: "")
+    
     lazy var infoHorizontalStackView: UIStackView = {
         
         let infoHoriziontalStackView = UIStackView()
@@ -38,13 +44,24 @@ class DetailViewInfoBody: BaseUI {
             .font : UIFont.systemFont(ofSize: 22, weight: .bold),
         ])
         
-        let infos : [String: String] = [
-            "크기":"\(width) x \(height)",
-            "조회수": "\(viewedNumber)",
-            "다운로드": "\(downloadedNumber)"
+        let infos : [[String]] = [
+            ["크기", "\(width) x \(height)"],
+            ["조회수", "\(viewedNumber)"],
+            ["다운로드", "\(downloadedNumber)"]
         ]
         
-        let rightView = MultipleKeyValueStackVie(keyAndValues: infos)
+        let rightView = UIStackView()
+        rightView.axis = .vertical
+        rightView.distribution = .equalSpacing
+        rightView.spacing = 8
+        
+        
+        var index = 0
+        [sizeInfoRow, viewInfoRow, downloadInfoRow].forEach {
+            $0.updateViewData(inputData:infos[index] )
+            rightView.addArrangedSubview($0)
+            index += 1
+        }
         
         infoHoriziontalStackView.addArrangedSubview(label1)
         infoHoriziontalStackView.addArrangedSubview(rightView)
@@ -64,43 +81,16 @@ class DetailViewInfoBody: BaseUI {
             $0.bottom.equalToSuperview()
         }
     }
-}
-
-
-class MultipleKeyValueStackVie : BaseUI {
     
-    var keyAndValues: [String: String]
-    
-    init(keyAndValues: [String: String]) {
-        self.keyAndValues = keyAndValues
-        super.init(frame: .zero)
-    }
-    
-    override func configureViewHierarchy() {
-        keyAndValues.forEach { key, value in
-            let twoEndedView = TwoEndedKeyValueView(key: key, value: value)
-            addSubview(twoEndedView)
-        }
-    }
-    
-    override func configureViewLayout() {
-        
-        var verticalCoordinateBase = UIView()
-        for (i,subView) in subviews.enumerated() {
-            subView.snp.makeConstraints {
-                if i == 0 {
-                    $0.top.equalToSuperview()
-                } else {
-                    $0.top.equalTo(verticalCoordinateBase.snp.bottom).offset(8)
-                }
-                
-                $0.horizontalEdges.equalToSuperview()
-                verticalCoordinateBase = subviews[i]
-            }
+    override func updateViewData<T>(inputData: T) {
+        guard let dictionary = inputData as? [String: String] else {
+            dump("[Error on inputData] not allowed typo for DetailViewInfoBody:updateViewData")
+            return
         }
         
-        subviews.last?.snp.makeConstraints {
-            $0.bottom.equalToSuperview()
+        [sizeInfoRow, viewInfoRow, downloadInfoRow].forEach {
+            guard let twoWayEndedView = $0 as? TwoEndedKeyValueView else { return }
+            twoWayEndedView.updateViewData(inputData: dictionary[twoWayEndedView.key])
         }
     }
 }
@@ -145,5 +135,21 @@ class TwoEndedKeyValueView : BaseUI {
     override func configureViewDesign() {
         keyLabel.text = key
         valueLabel.text = value
+    }
+    
+    override func updateViewData<T>(inputData: T) {
+        
+        if let keyValueInOneArray = inputData as? [String] {
+            self.key = keyValueInOneArray[0]
+            self.value = keyValueInOneArray[1]
+            
+            keyLabel.text = self.key
+            valueLabel.text = self.value
+        }
+        
+        if let inputString = inputData as? String {
+            self.value = "\(inputString)"
+            valueLabel.text = self.value
+        }
     }
 }

@@ -13,27 +13,13 @@ class DetailViewController : BaseScrollViewController {
     
     var photoStaticsData : PhotoStaticsReponse? {
         didSet {
-            detailInfoBody.viewedNumber = photoStaticsData?.views.total ?? 0
-            detailInfoBody.downloadedNumber = photoStaticsData?.downloads.total ?? 0
-            
             let requiredData = [
                 "크기":"\(photo.width) x \(photo.height)",
                 "조회수": "\(photoStaticsData!.views.total)",
                 "다운로드": "\(photoStaticsData!.downloads.total)"
             ]
             
-            if let keyValueViews = detailInfoBody.infoHorizontalStackView.arrangedSubviews[1] as? MultipleKeyValueStackVie {
-                
-                keyValueViews.subviews.forEach {
-                    if let view = $0 as? TwoEndedKeyValueView {
-                        view.valueLabel.text = requiredData[view.keyLabel.text!]
-                    } else {
-                        print("this is not an TwoEndedView")
-                    }
-                }
-            } else {
-                print("not multikeyvalueview")
-            }
+            detailInfoBody.updateViewData(inputData: requiredData)
         }
     }
     

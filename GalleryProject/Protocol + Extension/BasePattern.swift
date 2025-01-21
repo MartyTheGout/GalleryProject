@@ -39,6 +39,8 @@ class BaseUI : UIView, UIEssentialCycle {
     func configureViewLayout() {}
     
     func configureViewDesign() {}
+    
+    func updateViewData<T>(inputData: T) {}
 }
 
 //MARK: BaseViewController - Extension
