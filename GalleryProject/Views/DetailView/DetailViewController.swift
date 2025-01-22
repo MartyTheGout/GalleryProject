@@ -8,10 +8,10 @@
 import UIKit
 import SnapKit
 
-class DetailViewController : BaseScrollViewController {
-    let photo: PhotoData
+final class DetailViewController : BaseScrollViewController {
+    private let photo: PhotoData
     
-    var photoStaticsData : PhotoStaticsReponse? {
+    private var photoStaticsData : PhotoStaticsReponse? {
         didSet {
             let requiredData = [
                 "크기":"\(photo.width) x \(photo.height)",
@@ -76,7 +76,4 @@ class DetailViewController : BaseScrollViewController {
             $0.horizontalEdges.equalTo(contentView)
         }
     }
-    
-    override func configureViewDesign() {}
-    
 }

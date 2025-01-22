@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class TopicCollection: BaseUI {
+final class TopicCollection: BaseUI {
 
     let topicTitle = {
        let topicTitle = UILabel()

@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class SearchViewHeader: BaseUI {
+final class SearchViewHeader: BaseUI {
 
     let searchBar = {
         let searchBar = UISearchBar()

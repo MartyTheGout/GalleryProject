@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class SearchViewBody: BaseUI {
+final class SearchViewBody: BaseUI {
 
     let collectionView = {
         let flowLayout = UICollectionViewFlowLayout()

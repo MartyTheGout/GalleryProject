@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class SearchViewEmptyBody : BaseUI {
+final class SearchViewEmptyBody : BaseUI {
     
     let resultLabel = {
         let resultLabel = UILabel()

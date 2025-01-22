@@ -8,9 +8,9 @@
 import UIKit
 import Kingfisher
 
-class ImageViewCell : BaseCollecionViewCell {
+final class ImageViewCell : BaseCollecionViewCell {
     
-    let imageView = {
+    private let imageView = {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
@@ -18,7 +18,7 @@ class ImageViewCell : BaseCollecionViewCell {
         return imageView
     }()
     
-    let starLabel = {
+    private let starLabel = {
         let starLabel = UILabel()
         starLabel.backgroundColor = .darkGray
         starLabel.textColor = .white

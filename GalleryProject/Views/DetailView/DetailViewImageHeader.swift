@@ -9,7 +9,7 @@ import UIKit
 import SnapKit
 import Kingfisher
 
-class DetailViewImageHeader: BaseUI {
+final class DetailViewImageHeader: BaseUI {
     var width : Int
     var height : Int
     var userName : String

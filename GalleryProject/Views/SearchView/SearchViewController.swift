@@ -8,10 +8,10 @@
 import UIKit
 import SnapKit
 
-class SearchViewController : BaseViewController {
-    let header = SearchViewHeader()
-    let body = SearchViewBody()
-    let emptyBody = SearchViewEmptyBody()
+final class SearchViewController : BaseViewController {
+    private let header = SearchViewHeader()
+    private let body = SearchViewBody()
+    private let emptyBody = SearchViewEmptyBody()
     
     var dataSource: [PhotoData] = [] {
         didSet {
@@ -43,11 +43,11 @@ class SearchViewController : BaseViewController {
         header.sortButton.addTarget(self, action: #selector(changeSearchFilter) , for: .touchUpInside)
     }
     
-    func configureNavigationItem() {
+    private func configureNavigationItem() {
         navigationItem.title = "SEARCH PHOTO"
     }
     
-    func controlSearchResultOnView() {
+    private func controlSearchResultOnView() {
         if dataSource.isEmpty {
             emptyBody.isHidden = false
             
@@ -91,7 +91,7 @@ class SearchViewController : BaseViewController {
     }
     
     @objc
-    func changeSearchFilter() {
+    private func changeSearchFilter() {
         let newSearchCriteria : SearchCriteria = currentSearchCriteria == .relevant ? .latest : .relevant
         getPhotos(currentKeyword, searchCriteria: newSearchCriteria)
         header.sortButton.setTitle(newSearchCriteria.getbuttonText(), for: .normal)
@@ -99,7 +99,7 @@ class SearchViewController : BaseViewController {
         //                    self.header.sortButton.titleLabel?.text = searchCriteria.getbuttonText()
     }
     
-    func getPhotos(_ searchKeyword : String, searchCriteria : SearchCriteria, paging: Int = 1 ) {
+    private func getPhotos(_ searchKeyword : String, searchCriteria : SearchCriteria, paging: Int = 1 ) {
         
         NetworkManager.shared.callRequest(api: .search(query: searchKeyword, paging: paging, searchCriteria: searchCriteria) ) { (photoResponse: SearchPhotoResponse) -> Void in
             

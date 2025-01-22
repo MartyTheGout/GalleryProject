@@ -75,7 +75,7 @@ enum UnsplashRequest {
 }
 
 
-class NetworkManager {
+final class NetworkManager {
     static let shared : NetworkManager = NetworkManager()
     let dataPerRequest = 20
     

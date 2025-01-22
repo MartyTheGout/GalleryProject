@@ -8,16 +8,16 @@
 import UIKit
 import SnapKit
 
-class MainViewController : BaseScrollViewController {
+final class MainViewController : BaseScrollViewController {
     
-    let headerView = MainViewHeader()
-    let firstTopicCollection = TopicCollection()
-    let secondTopicCollection = TopicCollection()
-    let thirdTopicCollection = TopicCollection()
+    private let headerView = MainViewHeader()
+    private let firstTopicCollection = TopicCollection()
+    private let secondTopicCollection = TopicCollection()
+    private let thirdTopicCollection = TopicCollection()
     
-    let numberOfItem = 10
+    private let numberOfItem = 10
     
-    var dataSource: [[PhotoData]] = [[],[],[]]
+    private var dataSource: [[PhotoData]] = [[],[],[]]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -67,14 +67,14 @@ class MainViewController : BaseScrollViewController {
         }
     }
     
-    func setHandler(index: Int, group: DispatchGroup) -> (_ : [PhotoData]) -> Void {
+    private func setHandler(index: Int, group: DispatchGroup) -> (_ : [PhotoData]) -> Void {
         return { photoResponse in
             self.dataSource[index] = photoResponse
             group.leave()
         }
     }
     
-    func loadDataSource() -> Void {
+    private func loadDataSource() -> Void {
         let dispatchGroup = DispatchGroup()
         
         for i in 0...dataSource.count - 1 {
@@ -97,12 +97,12 @@ class MainViewController : BaseScrollViewController {
 }
 
 extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    internal func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         numberOfItem
     }
     
     // 이거를 await로 만들어서 사용할 수는 없나?
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    internal func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         // No need to have conditional handling for first/second/thirdTopicCollection
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ImageViewCell.identifier, for: indexPath) as? ImageViewCell {
             let index = returnKeywordIndex(collectionView)
@@ -117,13 +117,13 @@ extension MainViewController : UICollectionViewDelegate, UICollectionViewDataSou
         return UICollectionViewCell()
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+    internal func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let photoAtIndexPath = dataSource[returnKeywordIndex(collectionView)][indexPath.item]
         let detailVC = DetailViewController(photo: photoAtIndexPath )
         navigationController?.pushViewController(detailVC, animated: true)
     }
     
-    func returnKeywordIndex (_ collectionView : UICollectionView) -> Int {
+    private func returnKeywordIndex (_ collectionView : UICollectionView) -> Int {
         if collectionView == firstTopicCollection.collectionView{
             return 0
         } else if collectionView == secondTopicCollection.collectionView {

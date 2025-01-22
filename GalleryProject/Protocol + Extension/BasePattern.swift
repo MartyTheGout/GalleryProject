@@ -34,11 +34,11 @@ class BaseUI : UIView, UIEssentialCycle {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureViewHierarchy() {}
+    internal func configureViewHierarchy() {}
 
-    func configureViewLayout() {}
+    internal func configureViewLayout() {}
     
-    func configureViewDesign() {}
+    internal func configureViewDesign() {}
     
     func updateViewData<T>(inputData: T) {}
 }
@@ -55,34 +55,34 @@ class BaseViewController : UIViewController, UIEssentialCycle {
         addingDismissTap()
     }
     
-    func configureViewHierarchy() {}
+    internal func configureViewHierarchy() {}
 
-    func configureViewLayout() {}
+    internal func configureViewLayout() {}
     
-    func configureViewDesign() {}
+    internal func configureViewDesign() {}
     
-    func configureNavigatorSection() {
+    private func configureNavigatorSection() {
         let navigationBarAppearance = UINavigationBarAppearance()
         navigationBarAppearance.titleTextAttributes = [
             .foregroundColor: UIColor.black,
             .font: UIFont(name: "Arial Rounded MT Bold", size: 25)!]
     }
     
-    func showAlert(title: String, message: String, actionMessage: String) {
+    internal func showAlert(title: String, message: String, actionMessage: String) {
         let alertController = UIAlertController(title: title , message: message, preferredStyle: .alert)
         let action = UIAlertAction(title: actionMessage, style: .default)
         alertController.addAction(action)
         present(alertController, animated: true)
     }
     
-    func addingDismissTap() {
+    private func addingDismissTap() {
         let outsidTap = UITapGestureRecognizer(target: self, action: #selector(dismissEditing))
         outsidTap.cancelsTouchesInView = false
         view.addGestureRecognizer(outsidTap)
     }
     
     @objc
-    func dismissEditing() {
+    private func dismissEditing() {
         view.endEditing(true)
     }
     
@@ -103,11 +103,11 @@ class BaseCollecionViewCell : UICollectionViewCell, UIEssentialCycle {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configureViewHierarchy() {}
+    internal func configureViewHierarchy() {}
 
-    func configureViewLayout() {}
+    internal func configureViewLayout() {}
     
-    func configureViewDesign() {}
+    internal func configureViewDesign() {}
 }
 
 //MARK: BaseScrollViewController - Extension
@@ -139,12 +139,12 @@ class BaseScrollViewController : UIViewController, UIEssentialCycle, UIScrollVie
     }
     
     // Default is vertical setting 
-    func configureScrollToContentHierarchy() {
+    internal func configureScrollToContentHierarchy() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
     }
     
-    func configureScrollToContentLayout() {
+    internal func configureScrollToContentLayout() {
         scrollView.snp.makeConstraints {
             $0.edges.equalTo(view.safeAreaLayoutGuide)
         }
@@ -155,13 +155,13 @@ class BaseScrollViewController : UIViewController, UIEssentialCycle, UIScrollVie
         }
     }
     
-    func configureViewHierarchy() {}
+    internal func configureViewHierarchy() {}
 
-    func configureViewLayout() {}
+    internal func configureViewLayout() {}
     
-    func configureViewDesign() {}
+    internal func configureViewDesign() {}
     
-    func attachingContentViewToBottomElement() {
+    internal func attachingContentViewToBottomElement() {
         guard let lastTarget = contentView.subviews.last else {
             print("[Ambiguous] There is no element to attach to the bottom of contentView")
             return

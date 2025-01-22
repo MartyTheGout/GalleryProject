@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainViewHeader : BaseUI {
+final class MainViewHeader : BaseUI {
     let profileImage = {
         let profileImage = UIImageView()
         profileImage.image = UIImage(systemName: "person.circle.fill")

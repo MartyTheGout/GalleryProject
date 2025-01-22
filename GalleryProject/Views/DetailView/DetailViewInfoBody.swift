@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-class DetailViewInfoBody: BaseUI {
+final class DetailViewInfoBody: BaseUI {
     
     var width: Int
     var height: Int
@@ -27,11 +27,11 @@ class DetailViewInfoBody: BaseUI {
         fatalError("init(coder:) has not been implemented")
     }
     
-    let sizeInfoRow: BaseUI = TwoEndedKeyValueView(key: "", value: "")
+    private let sizeInfoRow: BaseUI = TwoEndedKeyValueView(key: "", value: "")
     
-    let viewInfoRow: BaseUI = TwoEndedKeyValueView(key: "", value: "")
+    private let viewInfoRow: BaseUI = TwoEndedKeyValueView(key: "", value: "")
     
-    let downloadInfoRow: BaseUI = TwoEndedKeyValueView(key: "", value: "")
+    private let downloadInfoRow: BaseUI = TwoEndedKeyValueView(key: "", value: "")
     
     lazy var infoHorizontalStackView: UIStackView = {
         
