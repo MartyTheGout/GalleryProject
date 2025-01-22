@@ -8,6 +8,49 @@
 import Foundation
 import Alamofire
 
+enum HttpResponseError : Error {
+    case incorrectParameters
+    case unautorized
+    case lackOfPermission
+    case noPathExists
+    case internalServerError
+    case undefinedCode
+    
+    init?(statusCode: Int) {
+        switch statusCode {
+        case 400:
+            self = .incorrectParameters
+        case 401:
+            self = .unautorized
+        case 403:
+            self = .lackOfPermission
+        case 404:
+            self = .noPathExists
+        case 500... :
+            self = .internalServerError
+        default :
+            self = .undefinedCode
+        }
+    }
+    
+    var description : String {
+        switch self {
+            case .incorrectParameters:
+                return "[400] Incorrect parameters or body assumed"
+            case .unautorized: 
+                return "[401] Unautorized Request: Invalid access token"
+            case .lackOfPermission: 
+                return "[403] Lack of permission: Check the user's permission"
+            case .noPathExists: 
+                return "[404] No path exists: Confirm base url / path behind"
+            case .internalServerError: 
+                return "[500] Internal server error: Check the server side notice"
+            case .undefinedCode: 
+                return "[XXX] Undefined code: Check the response document"
+        }
+    }
+}
+
 enum UnsplashRequest {
     case topic(query: String)
     case search(query: String, paging: Int, searchCriteria: SearchCriteria)
@@ -17,7 +60,7 @@ enum UnsplashRequest {
     var dataPerRequest: Int { 20 }
     
     var authorizationHeader: HTTPHeaders {
-        return ["Authorization": "\(APIKeys.UnsplashAcessKey.rawValue)"]
+        return ["Authorization": "\(APIKeys.UnsplashAccessKey.rawValue)"]
     }
     
     var method: HTTPMethod { .get }
@@ -47,7 +90,9 @@ class NetworkManager {
             case .success(let value):
                 completionHandler(value)
             case .failure(let error):
+                print(HttpResponseError(statusCode: response.response?.statusCode ?? 0)!)
                 failureHandler?()
+                
                 print("Error: \(error)")
             }
         }
