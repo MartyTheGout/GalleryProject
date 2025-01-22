@@ -171,4 +171,11 @@ class BaseScrollViewController : UIViewController, UIEssentialCycle, UIScrollVie
             $0.bottom.equalTo(lastTarget.snp.bottom)
         }
     }
+    
+    internal func showAlert(title: String, message: String, actionMessage: String) {
+        let alertController = UIAlertController(title: title , message: message, preferredStyle: .alert)
+        let action = UIAlertAction(title: actionMessage, style: .default)
+        alertController.addAction(action)
+        present(alertController, animated: true)
+    }
 }

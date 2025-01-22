@@ -74,7 +74,6 @@ enum UnsplashRequest {
     }
 }
 
-
 final class NetworkManager {
     static let shared : NetworkManager = NetworkManager()
     let dataPerRequest = 20
@@ -83,17 +82,15 @@ final class NetworkManager {
     
     func callRequest<T: Decodable>(api: UnsplashRequest,
                                    completionHandler: @escaping (T) -> Void,
-                                   failureHandler: (() -> Void)? = nil
+                                   failureHandler: ((AFError, HttpResponseError?) -> Void)? = nil
     ) {
         AF.request(api.endpoint, method: api.method, headers: api.authorizationHeader).responseDecodable(of: T.self) { response in
             switch response.result {
             case .success(let value):
                 completionHandler(value)
             case .failure(let error):
-                print(HttpResponseError(statusCode: response.response?.statusCode ?? 0)!)
-                failureHandler?()
-                
-                print("Error: \(error)")
+                let customError = HttpResponseError(statusCode: response.response?.statusCode ?? 0)
+                failureHandler?(error, customError)
             }
         }
     }

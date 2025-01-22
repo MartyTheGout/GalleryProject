@@ -119,6 +119,8 @@ final class SearchViewController : BaseViewController {
                 }
             }
             self.currentKeyword = searchKeyword
+        } failureHandler: { afError, httpError in
+            self.showAlert(title: "Unsplash와의 통신에 문제가 있어요.", message: (httpError?.description ?? afError.errorDescription)!, actionMessage: "관리자에게 문의할게요")
         }
     }
 }

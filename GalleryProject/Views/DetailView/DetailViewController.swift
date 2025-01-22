@@ -56,6 +56,8 @@ final class DetailViewController : BaseScrollViewController {
         
         NetworkManager.shared.callRequest(api: .statistics(query: photo.id)) { (response : PhotoStaticsReponse)-> Void in
                 self.photoStaticsData = response
+        } failureHandler: { afError, httpError in
+            self.showAlert(title: "Unsplash와의 통신에 문제가 있어요.", message: (httpError?.description ?? afError.errorDescription)!, actionMessage: "관리자에게 문의할게요")
         }
     }
     

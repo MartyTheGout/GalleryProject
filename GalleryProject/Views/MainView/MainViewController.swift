@@ -85,7 +85,10 @@ final class MainViewController : BaseScrollViewController {
                 NetworkManager.shared.callRequest(
                     api: .topic(query: searchKeyword),
                     completionHandler: setHandler(index: i, group: dispatchGroup),
-                    failureHandler: { dispatchGroup.leave()}
+                    failureHandler: { afError, httpError in
+                        dispatchGroup.leave()
+                        self.showAlert(title: "Unsplash와의 통신에 문제가 있어요.", message: (httpError?.description ?? afError.errorDescription)!, actionMessage: "관리자에게 문의할게요")
+                    }
                 )
             }
         }
