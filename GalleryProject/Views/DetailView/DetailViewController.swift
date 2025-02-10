@@ -10,42 +10,39 @@ import SnapKit
 import Alamofire
 
 final class DetailViewController : BaseScrollViewController {
-    private let photo: PhotoData
     
-    private var photoStaticsData : PhotoStaticsReponse? {
-        didSet {
-            let requiredData = [
-                "크기":"\(photo.width) x \(photo.height)",
-                "조회수": "\(photoStaticsData!.views.total)",
-                "다운로드": "\(photoStaticsData!.downloads.total)"
-            ]
-            
-            detailInfoBody.updateViewData(inputData: requiredData)
-        }
-    }
+    var viewModel: DetailViewModel
     
     //MARK: - View Components
     lazy var imageHeader: DetailViewImageHeader = {
+        let photo = self.viewModel.input.photo.value
+        
         let detailViewImageHeader = DetailViewImageHeader(
-            width: self.photo.width,
-            height: self.photo.height,
-            userName: self.photo.user.username,
-            userProfileImageURL : self.photo.user.profileImage.small,
-            dateInfo: self.photo.createdAt,
-            imageURL: self.photo.urls.thumb
+            width: photo.width,
+            height: photo.height,
+            userName: photo.user.username,
+            userProfileImageURL : photo.user.profileImage.small,
+            dateInfo: photo.createdAt,
+            imageURL: photo.urls.thumb
         )
         return detailViewImageHeader
     }()
     
     lazy var detailInfoBody: DetailViewInfoBody = {
+        let photo = self.viewModel.input.photo.value
+        
+        
+        let imageDetail = ImageDetailInfo (width: photo.width, height: photo.height, downloadedNumber: 0, viewedNumber: 0)
+        
         let detailInfoBody = DetailViewInfoBody(
-            width: self.photo.width, height: self.photo.height, downloadedNumber: 0, viewedNumber: 0
+            imageDetailInfo: imageDetail
         )
         return detailInfoBody
     }()
     
     init(photo: PhotoData) {
-        self.photo = photo
+        self.viewModel = DetailViewModel(photo: photo)
+
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -55,17 +52,7 @@ final class DetailViewController : BaseScrollViewController {
     //MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        //NetworkManager => completion handlr 로 고치고 시작합니다.
-        NetworkManager.shared.callRequest(api: .statistics(query: photo.id)) { (response : Result<PhotoStaticsReponse, AFError> ) -> Void in
-            
-            switch response {
-            case .success(let data):
-                self.photoStaticsData = data
-            case .failure(let error):
-                self.showAlert(title: "Unsplash와의 통신에 문제가 있어요.", message: error.localizedDescription, actionMessage: "관리자에게 문의할게요")
-            }
-
-        }
+        setDataBindings()
     }
     
     override func configureViewHierarchy() {
@@ -85,4 +72,34 @@ final class DetailViewController : BaseScrollViewController {
             $0.horizontalEdges.equalTo(contentView)
         }
     }
+}
+
+extension DetailViewController {
+    func setDataBindings() {
+        viewModel.output.photoStaticsData.bind { [weak self] response in
+            switch response {
+            case .success(let data):
+                let photoStaticsData = data
+                guard let photo = self?.viewModel.input.photo.value else { return }
+                
+                self?.detailInfoBody.viewModel.input.imageDetailInfo.value = ImageDetailInfo(width: photo.width, height: photo.height, downloadedNumber: photoStaticsData.downloads.total, viewedNumber: photoStaticsData.views.total)
+                
+                return
+            case .failure(let error):
+                self?.showAlert(title: "Unsplash와의 통신에 문제가 있어요.", message: error.localizedDescription, actionMessage: "관리자에게 문의할게요")
+                return
+                
+            case .none:
+                return
+            }
+        }
+    }
+}
+
+//MARK: - ImageDetailInfo Type Declaration
+struct ImageDetailInfo {
+    let width: Int
+    let height: Int
+    let downloadedNumber: Int
+    let viewedNumber: Int
 }

@@ -10,26 +10,21 @@ import SnapKit
 import Kingfisher
 
 final class DetailViewImageHeader: BaseUI {
-    var width : Int
-    var height : Int
-    var userName : String
-    var userProfileImageURL : String
-    var dateInfo : String
-    var imageURL : String
+    let viewModel : DetailHeaderViewModel
     
     init(width: Int, height: Int, userName: String, userProfileImageURL: String,  dateInfo: String, imageURL: String) {
-        self.width = width
-        self.height = height
-        self.userName = userName
-        self.userProfileImageURL = userProfileImageURL
-        self.dateInfo = dateInfo
-        self.imageURL = imageURL
+        
+        let imageHeader = ImageHeader(width: width, height: height, userName: userName, userProfileImageURL: userProfileImageURL, dateInfo: dateInfo, imageURL: imageURL)
+        
+        self.viewModel = DetailHeaderViewModel(imageHeader: imageHeader)
         
         super.init(frame: .zero)
         
         configureViewHierarchy()
         configureViewLayout()
         configureViewDesign()
+        
+        setDataBindings()
     }
     
     
@@ -95,6 +90,11 @@ final class DetailViewImageHeader: BaseUI {
         }
         
         imageSection.snp.makeConstraints {
+            
+            let imageHeader = viewModel.output.imageHeader.value
+            let width = imageHeader.width
+            let height = imageHeader.height
+            
             let aspectRatio = (width > 0 && height > 0) ? CGFloat(height) / CGFloat(width) : 1.0
             $0.top.equalTo(verticalCoordinateBase).offset(20)
             $0.horizontalEdges.equalToSuperview()
@@ -104,18 +104,7 @@ final class DetailViewImageHeader: BaseUI {
         }
     }
     
-    override func configureViewDesign() {
-        userProfileImage.layer.masksToBounds = true
-        userProfileImage.kf.setImage(with: URL(string: imageURL))
-        
-        userNameLabel.text = userName
-        
-        dateLabel.text = convertDateFormat(dateInfo)
-        
-        imageSection.layer.masksToBounds = true
-        imageSection.kf.setImage(with: URL(string: imageURL))
-        
-    }
+    override func configureViewDesign() {}
     
     override func layoutSubviews() {
         super.layoutSubviews()
@@ -123,17 +112,21 @@ final class DetailViewImageHeader: BaseUI {
     }
 }
 
-//MARK: - Actions
+
+//MARK: - Data Bindings
 extension DetailViewImageHeader {
-    private func convertDateFormat(_ dateInfo : String) -> String {
+    func setDataBindings() {
+        viewModel.output.imageHeader.bind { [weak self] value in
+            self?.userProfileImage.layer.masksToBounds = true
+            self?.userProfileImage.kf.setImage(with: URL(string: value.userProfileImageURL))
+            
+            self?.userNameLabel.text = value.userName
+            
+            self?.dateLabel.text = self?.viewModel.convertDateFormat(value.dateInfo)
+            
+            self?.imageSection.layer.masksToBounds = true
+            self?.imageSection.kf.setImage(with: URL(string: value.imageURL))
+        }
         
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        
-        let date = dateFormatter.date(from: dateInfo)!
-        
-        dateFormatter.dateFormat = "yyyy년MM월dd일 게시됨"
-        
-        return dateFormatter.string(from: date)
     }
 }

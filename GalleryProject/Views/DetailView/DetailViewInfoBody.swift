@@ -10,17 +10,13 @@ import SnapKit
 
 final class DetailViewInfoBody: BaseUI {
     
-    var width: Int
-    var height: Int
-    var downloadedNumber: Int
-    var viewedNumber : Int
+    let viewModel: DetailBodyViewModel
     
-    init(width: Int, height: Int, downloadedNumber: Int, viewedNumber: Int) {
-        self.width = width
-        self.height = height
-        self.downloadedNumber = downloadedNumber
-        self.viewedNumber = viewedNumber
+    init(imageDetailInfo : ImageDetailInfo) {
+        self.viewModel = DetailBodyViewModel(imageDetailInfo: imageDetailInfo)
+        
         super.init(frame: .zero)
+        setDataBindings()
     }
     
     required init?(coder: NSCoder) {
@@ -48,11 +44,7 @@ final class DetailViewInfoBody: BaseUI {
             .font : UIFont.systemFont(ofSize: 22, weight: .bold),
         ])
         
-        let infos : [[String]] = [
-            ["크기", "\(width) x \(height)"],
-            ["조회수", "\(viewedNumber)"],
-            ["다운로드", "\(downloadedNumber)"]
-        ]
+        let infos : [[String]] = viewModel.convertOutputToStringArrayFormat()
         
         let rightStackView = UIStackView()
         rightStackView.axis = .vertical
@@ -97,7 +89,16 @@ final class DetailViewInfoBody: BaseUI {
         }
     }
 }
+//MARK: - Data Bindings
+extension DetailViewInfoBody {
+    func setDataBindings() {
+        viewModel.output.keyValueDict.bind { [weak self] value in
+            self?.updateViewData(inputData: value)
+        }
+    }
+}
 
+//MARK: - TwoEndedKeyValueView
 class TwoEndedKeyValueView : BaseUI {
     var key: String
     var value : String
@@ -131,6 +132,7 @@ class TwoEndedKeyValueView : BaseUI {
         }
         
         valueLabel.snp.makeConstraints {
+            $0.verticalEdges.equalToSuperview().offset(8)
             $0.trailing.equalToSuperview().offset(-8)
         }
     }
