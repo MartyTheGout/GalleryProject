@@ -27,6 +27,8 @@ final class DetailViewInfoBody: BaseUI {
         fatalError("init(coder:) has not been implemented")
     }
     
+    //MARK: - View Components
+    //TODO: refactor repetitive + complicated view ( start from value )
     private let sizeInfoRow: BaseUI = TwoEndedKeyValueView(key: "", value: "")
     
     private let viewInfoRow: BaseUI = TwoEndedKeyValueView(key: "", value: "")
@@ -37,10 +39,12 @@ final class DetailViewInfoBody: BaseUI {
         
         let infoHoriziontalStackView = UIStackView()
         infoHoriziontalStackView.axis = .horizontal
+        infoHoriziontalStackView.distribution = .equalSpacing
+        infoHoriziontalStackView.spacing = 0
         infoHoriziontalStackView.alignment = .top
         
-        let label1 = UILabel()
-        label1.attributedText = NSAttributedString(string: "정보", attributes: [
+        let leftLabel = UILabel()
+        leftLabel.attributedText = NSAttributedString(string: "정보", attributes: [
             .font : UIFont.systemFont(ofSize: 22, weight: .bold),
         ])
         
@@ -50,21 +54,20 @@ final class DetailViewInfoBody: BaseUI {
             ["다운로드", "\(downloadedNumber)"]
         ]
         
-        let rightView = UIStackView()
-        rightView.axis = .vertical
-        rightView.distribution = .equalSpacing
-        rightView.spacing = 8
-        
+        let rightStackView = UIStackView()
+        rightStackView.axis = .vertical
+        rightStackView.distribution = .fillEqually
+        rightStackView.spacing = 0
         
         var index = 0
         [sizeInfoRow, viewInfoRow, downloadInfoRow].forEach {
             $0.updateViewData(inputData:infos[index] )
-            rightView.addArrangedSubview($0)
+            rightStackView.addArrangedSubview($0)
             index += 1
         }
         
-        infoHoriziontalStackView.addArrangedSubview(label1)
-        infoHoriziontalStackView.addArrangedSubview(rightView)
+        infoHoriziontalStackView.addArrangedSubview(leftLabel)
+        infoHoriziontalStackView.addArrangedSubview(rightStackView)
         
         return infoHoriziontalStackView
     }()
@@ -77,7 +80,7 @@ final class DetailViewInfoBody: BaseUI {
     override func configureViewLayout() {
         infoHorizontalStackView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(10)
-            $0.horizontalEdges.equalToSuperview()
+            $0.horizontalEdges.equalToSuperview().inset(10)
             $0.bottom.equalToSuperview()
         }
     }

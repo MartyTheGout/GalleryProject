@@ -32,6 +32,8 @@ final class DetailViewImageHeader: BaseUI {
         configureViewDesign()
     }
     
+    
+    //MARK: - View Components
     let introducmentInfoSection = UIView()
     
     let userProfileImage: UIImageView = {
@@ -58,6 +60,7 @@ final class DetailViewImageHeader: BaseUI {
         return imageSection
     }()
     
+    //MARK: - View Life Cycle
     override func configureViewHierarchy() {
         [introducmentInfoSection, imageSection].forEach { addSubview($0) }
         [userProfileImage, userNameLabel, dateLabel].forEach { introducmentInfoSection.addSubview($0) }
@@ -101,18 +104,6 @@ final class DetailViewImageHeader: BaseUI {
         }
     }
     
-    private func convertDateFormat(_ dateInfo : String) -> String {
-        
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        
-        let date = dateFormatter.date(from: dateInfo)!
-        
-        dateFormatter.dateFormat = "yyyy년MM월dd일 게시됨"
-        
-        return dateFormatter.string(from: date)
-    }
-    
     override func configureViewDesign() {
         userProfileImage.layer.masksToBounds = true
         userProfileImage.kf.setImage(with: URL(string: imageURL))
@@ -130,5 +121,19 @@ final class DetailViewImageHeader: BaseUI {
         super.layoutSubviews()
         userProfileImage.layer.cornerRadius = 20
     }
-    
+}
+
+//MARK: - Actions
+extension DetailViewImageHeader {
+    private func convertDateFormat(_ dateInfo : String) -> String {
+        
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        
+        let date = dateFormatter.date(from: dateInfo)!
+        
+        dateFormatter.dateFormat = "yyyy년MM월dd일 게시됨"
+        
+        return dateFormatter.string(from: date)
+    }
 }
