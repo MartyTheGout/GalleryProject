@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Alamofire
 
 final class SearchViewController : BaseViewController {
     private let header = SearchViewHeader()
@@ -95,32 +96,36 @@ final class SearchViewController : BaseViewController {
         let newSearchCriteria : SearchCriteria = currentSearchCriteria == .relevant ? .latest : .relevant
         getPhotos(currentKeyword, searchCriteria: newSearchCriteria)
         header.sortButton.setTitle(newSearchCriteria.getbuttonText(), for: .normal)
-        //                    self.header.sortButton.setTitle(searchCriteria.getbuttonText(), for: .normal) // TODO: attributedTitle 과는 작동하지 않는다. => sortButton 과도 확인해보기. 
+        //                    self.header.sortButton.setTitle(searchCriteria.getbuttonText(), for: .normal) // TODO: attributedTitle 과는 작동하지 않는다. => sortButton 과도 확인해보기.
         //                    self.header.sortButton.titleLabel?.text = searchCriteria.getbuttonText()
     }
     
     private func getPhotos(_ searchKeyword : String, searchCriteria : SearchCriteria, paging: Int = 1 ) {
         
-        NetworkManager.shared.callRequest(api: .search(query: searchKeyword, paging: paging, searchCriteria: searchCriteria) ) { (photoResponse: SearchPhotoResponse) -> Void in
+        NetworkManager.shared.callRequest(api: .search(query: searchKeyword, paging: paging, searchCriteria: searchCriteria) ) { (response: Result<SearchPhotoResponse, AFError> ) -> Void in
             
-            if self.currentSearchCriteria == searchCriteria && self.currentKeyword == searchKeyword{
-                self.dataSource.append(contentsOf: photoResponse.results)
-            } else {
-                self.dataSource = photoResponse.results
-            
-                if !self.dataSource.isEmpty {
-                    self.body.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+            switch response {
+            case .success(let photoResponse) :
+                if self.currentSearchCriteria == searchCriteria && self.currentKeyword == searchKeyword{
+                    self.dataSource.append(contentsOf: photoResponse.results)
+                } else {
+                    self.dataSource = photoResponse.results
+                    
+                    if !self.dataSource.isEmpty {
+                        self.body.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: .top, animated: true)
+                    }
+                    
+                    self.currentPage = 1
+                    
+                    if self.currentSearchCriteria != searchCriteria { // TODO: not working as expected
+                        self.currentSearchCriteria = searchCriteria
+                    }
                 }
+                self.currentKeyword = searchKeyword
                 
-                self.currentPage = 1
-                
-                if self.currentSearchCriteria != searchCriteria { // TODO: not working as expected
-                    self.currentSearchCriteria = searchCriteria
-                }
+            case .failure(let error) :
+                self.showAlert(title: "Unsplash와의 통신에 문제가 있어요.", message: error.localizedDescription, actionMessage: "관리자에게 문의할게요")
             }
-            self.currentKeyword = searchKeyword
-        } failureHandler: { afError, httpError in
-            self.showAlert(title: "Unsplash와의 통신에 문제가 있어요.", message: (httpError?.description ?? afError.errorDescription)!, actionMessage: "관리자에게 문의할게요")
         }
     }
 }

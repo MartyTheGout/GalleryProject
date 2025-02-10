@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Alamofire
 
 final class MainViewController : BaseScrollViewController {
     
@@ -83,13 +84,16 @@ final class MainViewController : BaseScrollViewController {
                 let searchKeyword = RequiredDataForViews.mainViewKeywords.getQueryString()[i] // 쉽게 괸리할 수 없을까? 복잡하다.
                 dispatchGroup.enter()
                 NetworkManager.shared.callRequest(
-                    api: .topic(query: searchKeyword),
-                    completionHandler: setHandler(index: i, group: dispatchGroup),
-                    failureHandler: { afError, httpError in
-                        dispatchGroup.leave()
-                        self.showAlert(title: "Unsplash와의 통신에 문제가 있어요.", message: (httpError?.description ?? afError.errorDescription)!, actionMessage: "관리자에게 문의할게요")
+                    api: .topic(query: searchKeyword)) { ( response : Result<[PhotoData], AFError>) -> Void in
+                        switch response {
+                            
+                        case .success(let data):
+                            self.setHandler(index: i, group: dispatchGroup)(data)
+                        case .failure(let error) :
+                            dispatchGroup.leave()
+                            self.showAlert(title: "Unsplash와의 통신에 문제가 있어요.", message: error.localizedDescription, actionMessage: "관리자에게 문의할게요")
+                        }
                     }
-                )
             }
         }
         

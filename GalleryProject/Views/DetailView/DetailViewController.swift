@@ -7,6 +7,7 @@
 
 import UIKit
 import SnapKit
+import Alamofire
 
 final class DetailViewController : BaseScrollViewController {
     private let photo: PhotoData
@@ -23,6 +24,7 @@ final class DetailViewController : BaseScrollViewController {
         }
     }
     
+    //MARK: - View Components
     lazy var imageHeader: DetailViewImageHeader = {
         let detailViewImageHeader = DetailViewImageHeader(
             width: self.photo.width,
@@ -50,14 +52,19 @@ final class DetailViewController : BaseScrollViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+    //MARK: - View Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        NetworkManager.shared.callRequest(api: .statistics(query: photo.id)) { (response : PhotoStaticsReponse)-> Void in
-                self.photoStaticsData = response
-        } failureHandler: { afError, httpError in
-            self.showAlert(title: "Unsplash와의 통신에 문제가 있어요.", message: (httpError?.description ?? afError.errorDescription)!, actionMessage: "관리자에게 문의할게요")
+        //NetworkManager => completion handlr 로 고치고 시작합니다.
+        NetworkManager.shared.callRequest(api: .statistics(query: photo.id)) { (response : Result<PhotoStaticsReponse, AFError> ) -> Void in
+            
+            switch response {
+            case .success(let data):
+                self.photoStaticsData = data
+            case .failure(let error):
+                self.showAlert(title: "Unsplash와의 통신에 문제가 있어요.", message: error.localizedDescription, actionMessage: "관리자에게 문의할게요")
+            }
+
         }
     }
     
